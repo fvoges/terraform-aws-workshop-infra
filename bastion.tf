@@ -3,6 +3,7 @@ resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
   subnet_id                   = module.vpc.public_subnets[count.index]
+  vpc_security_group_ids      = [aws_security_group.bastion.id]
   key_name                    = var.bastion_key_pair
   associate_public_ip_address = "true"
   user_data                   = data.template_file.bastion_user_data.rendered
@@ -22,7 +23,7 @@ resource "aws_instance" "bastion" {
 resource "aws_route53_record" "bastion" {
   count   = 1
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = "bastion.${data.aws_route53_zone.selected.name}"
+  name    = "${var.project}-bastion.${data.aws_route53_zone.selected.name}"
   type    = "A"
   ttl     = "300"
   records = [ aws_instance.bastion[count.index].public_ip ]
