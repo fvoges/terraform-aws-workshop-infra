@@ -26,7 +26,7 @@ resource "aws_route53_record" "bastion" {
   name    = "${var.project}-bastion.${data.aws_route53_zone.selected.name}"
   type    = "A"
   ttl     = "300"
-  records = [ aws_instance.bastion[count.index].public_ip ]
+  records = [aws_instance.bastion[count.index].public_ip]
 }
 
 resource "aws_security_group" "bastion" {
