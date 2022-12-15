@@ -8,15 +8,13 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = "true"
   user_data                   = data.template_file.bastion_user_data.rendered
 
-
   root_block_device {
     volume_size = 30
     volume_type = "gp2"
   }
 
   tags = {
-    Name    = "${var.project}-bastion"
-    Project = var.project
+    Name = "${var.project}-bastion"
   }
 }
 

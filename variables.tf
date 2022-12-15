@@ -23,3 +23,9 @@ variable "route53_zone" {
   type        = string
   description = "Route53 hosted DNS domain used to setup DNS records"
 }
+
+variable "tags" {
+  type        = map(string)
+  description = "Resource tags"
+  default     = {}
+}

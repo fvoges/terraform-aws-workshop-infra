@@ -1,6 +1,7 @@
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
+  version = ">= 3.18.0, <4.0.0"
 
   name = "${var.project}-vpc"
   cidr = "10.0.0.0/16"
@@ -10,11 +11,6 @@ module "vpc" {
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
   enable_dns_hostnames = true
-  enable_nat_gateway = true
-  enable_vpn_gateway = true
-
-  tags = {
-    Owner   = "federico@hashicorp.com"
-    Project = var.project
-  }
+  enable_nat_gateway   = true
+  enable_vpn_gateway   = true
 }
