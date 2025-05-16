@@ -101,5 +101,5 @@ runcmd:
   # - certbot --nginx -d lab-bastion.aws.voges.uk --non-interactive --agree-tos -m fvoges@gmail.com
   - /tmp/provision.sh
   - /opt/provision/scripts/provision.sh %{ for user in users ~}${ user.name } %{ endfor ~}
-  - test -f /var/run/reboot-required && reboot
+  # - test -f /var/run/reboot-required && reboot
 
