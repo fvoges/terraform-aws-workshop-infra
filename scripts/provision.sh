@@ -20,9 +20,9 @@ unzip /tmp/awscliv2.zip  -d /tmp
 curl -q https://gist.githubusercontent.com/fvoges/741de3b432e19c11c9bb/raw/rcinstall.sh|bash
 curl -q https://gist.githubusercontent.com/fvoges/741de3b432e19c11c9bb/raw/rcinstall.sh|su ubuntu -l -c bash
 
-get the list of users passed to the script and for each run the provision.sh script
+# get the list of users passed to the script and for each run the provision.sh script
 for user in "$@"; do
   echo "Running provision for user: $user"
 done
 
-
+# certbot --nginx -d lab-bastion.aws.voges.uk --non-interactive --agree-tos -m fvoges@gmail.com

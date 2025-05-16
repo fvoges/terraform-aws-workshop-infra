@@ -8,9 +8,9 @@ apt:
 # Add groups to the system
 # Adds the ubuntu group with members 'root' and 'sys'
 # and the empty group hashicorp.
-groups:
-  - ubuntu: [root,sys]
-  - hashicorp
+# groups:
+#   - ubuntu: [root,sys]
+#   - hashicorp
 
 # Add users to the system. Users are added after groups are added.
 users:
@@ -37,21 +37,7 @@ users:
       - ${ user.ssh_authorized_keys }
 %{ endfor ~}
 
-  # - name: terraform
-  #   gecos: terraform
-  #   shell: /bin/bash
-  #   primary_group: hashicorp
-  #   sudo: ALL=(ALL) NOPASSWD:ALL
-  #   groups: users, admin
-  #   lock_passwd: false
-  #   plain_text_password: hunter2
-  #   ssh_authorized_keys:
-  #     - ssh-rsa AAAAHHHHHH
-
-
-
-# Downloads the golang package
-package_reboot_if_required: true
+# package_reboot_if_required: true
 package_update: true
 package_upgrade: true
 packages:
@@ -77,6 +63,7 @@ packages:
   - neofetch
   - nginx
   - psmisc
+  - python3-certbot-nginx
   - rsync
   - sysstat
   - telnet
@@ -87,42 +74,32 @@ packages:
   - vim-nox
 
 write_files:
-- path: /etc/nginx/sites-available/default
-  permissions: '0644'
-  content: |
-    server {
-        listen 80 default_server;
-        server_name _;
-        return 444;
-    }
-  ower: 'nginx:nginx'
-  permissions: '0644'
-  defer: true
 %{ if scripts_repo_url != null && scripts_repo_url != "" ~}
- - path: //tmpprovision.sh
-  permissions: '0755'
-  content: |
-    #!/bin/bash
-    set -e
-    set -x
-    cd /opt
-    git clone ${ scripts_repo_url } scripts
-    cd scripts
-    chmod +x *.sh
-    ./provision.sh
-  owner: 'root:root'
-  permissions: '0755'
-  defer: true
-
-
+  - path: /tmp/provision.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      set -e
+      set -x
+      cd /opt
+      git clone --depth 1 ${ scripts_repo_url } provision
+      cd provision/scripts
+      chmod +x *.sh
+    owner: 'root:root'
+    permissions: '0755'
+    defer: true
 %{ endif ~}
 
 runcmd:
   - rm -f /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
   - systemctl restart ssh
+  - echo "Creating swap file..."
   - dd if=/dev/zero of=/swap bs=1MiB count=${ swap_size }
   - chmod 0600 /swap
   - mkswap /swap
   - swapon /swap
-  - /opt/scripts/provision.sh %{ for user in users ~}${ user.name } %{ endfor ~}
+  # - certbot --nginx -d lab-bastion.aws.voges.uk --non-interactive --agree-tos -m fvoges@gmail.com
+  - /tmp/provision.sh
+  - /opt/provision/scripts/provision.sh %{ for user in users ~}${ user.name } %{ endfor ~}
+  - test -f /var/run/reboot-required && reboot
 
