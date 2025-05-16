@@ -13,3 +13,11 @@ output "vpc_id" {
 output "bastion" {
   value = aws_route53_record.bastion[0].name
 }
+
+output "user_credentials" {
+  value = [for user in local.users : {
+    host = aws_route53_record.bastion[0].name,
+    user = user.name,
+    pass = user.password
+  }]
+}
