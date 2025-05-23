@@ -8,6 +8,6 @@ git config --global user.email "${USER}@${HOSTNAME}"
 git clone https://github.com/fvoges/terraform-aws-basic-infra.git
 git clone https://github.com/fvoges/hands-on-automation-lab.git
 
-ssh-keygen -f ~/.ssh/id_d25519 -t ed25519 -N "" -C $USER@lab-bastion.aws.voges.uk
+ssh-keygen -f ~/.ssh/id_d25519 -t ed25519 -N "" -C "${USER}@${HOSTNAME}"
 cat ~/.ssh/id_d25519.pub >> ~/.ssh/authorized_keys
 

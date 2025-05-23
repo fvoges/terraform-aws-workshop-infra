@@ -52,8 +52,8 @@ variable "tags" {
 
 variable "user_count" {
   type        = number
-  description = "Number of users to create"
-  default     = 15
+  description = "Number of delegate users to create"
+  default     = 0
 }
 
 variable "instance_type" {
