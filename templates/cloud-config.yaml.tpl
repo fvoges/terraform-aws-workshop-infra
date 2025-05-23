@@ -4,15 +4,19 @@ apt:
     hashicorp:
       source: deb [signed-by=$KEY_FILE] https://apt.releases.hashicorp.com $RELEASE main
       keyid: 798AEC654E5C15428C8E42EEAA16FCBCA621E701
+    docker:
+      source: deb [signed-by=$KEY_FILE] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
 
-# Add groups to the system
-# Adds the ubuntu group with members 'root' and 'sys'
-# and the empty group hashicorp.
-# groups:
-#   - ubuntu: [root,sys]
-#   - hashicorp
+# create the docker group
+groups:
+  - docker
 
-# Add users to the system. Users are added after groups are added.
+# Add default auto created user to docker group
+system_info:
+  default_user:
+    groups: [docker]
+
 users:
   - default
   - name: root
@@ -41,6 +45,8 @@ users:
 package_update: true
 package_upgrade: true
 packages:
+  - docker-ce
+  - docker-ce-cli
   - ack
   - apt-file
   - bash-completion
@@ -98,8 +104,6 @@ runcmd:
   - chmod 0600 /swap
   - mkswap /swap
   - swapon /swap
-  # - certbot --nginx -d lab-bastion.aws.voges.uk --non-interactive --agree-tos -m fvoges@gmail.com
   - /tmp/provision.sh
   - /opt/provision/scripts/provision.sh %{ for user in users ~}${ user.name } %{ endfor ~}
   # - test -f /var/run/reboot-required && reboot
-
